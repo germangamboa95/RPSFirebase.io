@@ -47,8 +47,13 @@ function writeUserData(userId, stat = "connected") {
 }
 
 function setDisconnectListener(id) {
+
   var ref = firebase.database().ref("users/" + id + "/status");
-  ref.onDisconnect().set("Disconnected")
+  ref.onDisconnect().set("Disconnected");
+  database.ref('msgs').push().set({
+    message: "has left the chat.",
+    byUser: id
+  });
 }
 
 function getConnected() {
@@ -59,27 +64,24 @@ function getConnected() {
 }
 
 function connectedUsersUpdate() {
-  database.ref('users').on('value', function(data) {
+  database.ref('users').on('child_changed', function(data) {
     let info = data.val();
-    console.log(info);
+    document.querySelector('.container').innerHTML += "<p>" + info.username +" has "+ info.status + "</p>";
   });
 }
 
 function checkMsgs() {
-  database.ref('msgs').on('value' ,function(data) {
+  database.ref('msgs').on('child_added' ,function(data) {
     let info = data.val();
-    appData.messages = info;
-    updateUI(appData);
+    console.log('here me ', info);
+    // appData.messages = info;
+      document.querySelector('.container').innerHTML += "<p>" + info.byUser +" has "+ info.message + "</p>";
   });
 }
 
 
-function updateUI(data) {
-  document.querySelector('.container').innerHTML = "";
-  for(let i in data.messages){
-    document.querySelector('.container').innerHTML += "<p>" + data.messages[i] + "</p>";
-  }
-}
+
+
 
 
 document.querySelector('#form').addEventListener('submit', function(e){
@@ -88,6 +90,9 @@ document.querySelector('#form').addEventListener('submit', function(e){
   let val = document.querySelector('#message').value;
   document.querySelector('#message').value = "";
   console.log(val);
-  database.ref('msgs').push().set(val);
+  database.ref('msgs').push().set({
+    byUser: appData.user,
+    message: val
+  });
 
 });
