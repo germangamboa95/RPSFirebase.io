@@ -1,6 +1,6 @@
 
 const appData = {}
-
+let counter = 0;
 const database = firebase.database();
 
 //Log user in on load
@@ -76,14 +76,20 @@ function getConnected() {
 function connectedUsersUpdate() {
   database.ref('users').on('child_changed', function(data) {
     let info = data.val();
-    document.querySelector('.container').innerHTML += "<p>" + info.username +" has "+ info.status + "</p>";
+    document.querySelector('.jumbotron').innerHTML += "<p>" + info.username +" has "+ info.status + "</p>";
   });
 }
 
 function checkMsgs() {
   database.ref('msgs').on('child_added' ,function(data) {
     let info = data.val();
+    counter++;
 
-      document.querySelector('.container').innerHTML += "<p>" + info.byUser +": "+ info.message + "</p>";
+      document.querySelector('.jumbotron').innerHTML += `<p id="${counter}"> ${info.byUser}:  ${info.message} </p>`;
+      document.querySelector('#focus').href = "#" +counter;
+      document.querySelector('#focus').click();
+      document.querySelector('#message').focus();
+
+
   });
 }
