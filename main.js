@@ -24,6 +24,19 @@ firebase.auth().onAuthStateChanged(function(user) {
     //Attach disconnect listener
     setDisconnectListener(appData.user);
     getConnected();
+    document.querySelector('#form').addEventListener('submit', function(e){
+      e.preventDefault();
+
+      let val = document.querySelector('#message').value;
+      document.querySelector('#message').value = "";
+      console.log(val);
+      database.ref('msgs').push().set({
+        byUser: appData.user,
+        message: val
+      });
+
+    });
+
 
 
     //Event listener loop below
@@ -50,10 +63,7 @@ function setDisconnectListener(id) {
 
   var ref = firebase.database().ref("users/" + id + "/status");
   ref.onDisconnect().set("Disconnected");
-  database.ref('msgs').push().set({
-    message: "has left the chat.",
-    byUser: id
-  });
+
 }
 
 function getConnected() {
@@ -77,21 +87,3 @@ function checkMsgs() {
       document.querySelector('.container').innerHTML += "<p>" + info.byUser +": "+ info.message + "</p>";
   });
 }
-
-
-
-
-
-
-document.querySelector('#form').addEventListener('submit', function(e){
-  e.preventDefault();
-
-  let val = document.querySelector('#message').value;
-  document.querySelector('#message').value = "";
-  console.log(val);
-  database.ref('msgs').push().set({
-    byUser: appData.user,
-    message: val
-  });
-
-});
