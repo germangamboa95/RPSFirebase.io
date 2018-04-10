@@ -75,6 +75,7 @@ function checkMsgs() {
 
 
 function updateUI(data) {
+  document.querySelector('.container').innerHTML = "";
   for(let i in data.messages){
     document.querySelector('.container').innerHTML += "<p>" + data.messages[i] + "</p>";
   }
