@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Testicle</title>
+  <style>
+  .container{
+    max-height: 100px;
+    border: 1px solid red;
+    overflow-y: scroll;
+
+  }
+</style>
+</head>
+<body>
+
+
+  <div class="container">
+  </div>
+  <form id="form" >
+    <input id="message" type="text">
+  </form>
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyBA10s-0KmX5gCCeoXwm7kt1q3uipXORdw",
+      authDomain: "messages-b4983.firebaseapp.com",
+      databaseURL: "https://messages-b4983.firebaseio.com",
+      projectId: "messages-b4983",
+      storageBucket: "messages-b4983.appspot.com",
+      messagingSenderId: "592036438499"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+<script src="main.js" charset="utf-8"></script>
+</body>
+</html>
