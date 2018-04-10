@@ -59,7 +59,7 @@ function setDisconnectListener(id) {
 function getConnected() {
   database.ref('users').once('value')
   .then(function(data) {
-    console.log("connected ",data.val());
+  // Handle new connected user
   });
 }
 
@@ -73,9 +73,8 @@ function connectedUsersUpdate() {
 function checkMsgs() {
   database.ref('msgs').on('child_added' ,function(data) {
     let info = data.val();
-    console.log('here me ', info);
-    // appData.messages = info;
-      document.querySelector('.container').innerHTML += "<p>" + info.byUser +" has "+ info.message + "</p>";
+
+      document.querySelector('.container').innerHTML += "<p>" + info.byUser +": "+ info.message + "</p>";
   });
 }
 
