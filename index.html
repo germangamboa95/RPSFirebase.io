@@ -6,44 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Chat APP</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <style>
-        .jumbotron{
-          max-height: 50vh;
-          overflow-y: scroll;
-        }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<div class="container">
+  <h1 class="text-center">Online RPS</h1>
 
-  <div class="container">
-    <div class="jumbotron">
+  <div class="row">
 
-
-    </div>
-    <a href="" id="focus"></a>
-  <form id="form" class="w-100" >
-    <input class="w-100" id="message" type="text">
-  </form>
+    <input id="player-name" class="form-control col-md-3" type="text">
+    <button id="add-player"class="btn btn-primary col-md-2">Add Player</button>
 
   </div>
+
+  <div class="row">
+    <div id="player-one" class="box col-md-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae illo molestiae eveniet temporibus, fugiat explicabo minus id nesciunt earum repellat soluta blanditiis tempore quibusdam praesentium!</div>
+    <div id="game-box"   class="box col-md-3">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam cupiditate, officia voluptatem ipsam atque officiis pariatur placeat accusamus similique molestiae quos ducimus debitis enim repellendus!</div>
+    <div id="player-two" class="box col-md-3">Waiting for Player...</div>
+
+  </div>
+</div>
 
 
 
   <script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
-  <script>
-    // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyBA10s-0KmX5gCCeoXwm7kt1q3uipXORdw",
-      authDomain: "messages-b4983.firebaseapp.com",
-      databaseURL: "https://messages-b4983.firebaseio.com",
-      projectId: "messages-b4983",
-      storageBucket: "messages-b4983.appspot.com",
-      messagingSenderId: "592036438499"
-    };
-    firebase.initializeApp(config);
-  </script>
 
-<script src="main.js" charset="utf-8"></script>
+<script src="app.js" charset="utf-8"></script>
 </body>
 </html>

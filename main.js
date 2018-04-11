@@ -3,6 +3,9 @@ const appData = {}
 let counter = 0;
 const database = firebase.database();
 
+appData.user_name = prompt('What is you name? ')
+
+
 //Log user in on load
 firebase.auth().signInAnonymously().catch(function(error) {
   // Handle Errors here.
@@ -24,6 +27,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     //Attach disconnect listener
     setDisconnectListener(appData.user);
     getConnected();
+
     document.querySelector('#form').addEventListener('submit', function(e){
       e.preventDefault();
 
@@ -32,7 +36,8 @@ firebase.auth().onAuthStateChanged(function(user) {
       console.log(val);
       database.ref('msgs').push().set({
         byUser: appData.user,
-        message: val
+        message: val,
+        user_name: appData.user_name
       });
 
     });
@@ -55,7 +60,8 @@ firebase.auth().onAuthStateChanged(function(user) {
 function writeUserData(userId, stat = "connected") {
   firebase.database().ref('users/' + userId).set({
     username: userId,
-    status: stat
+    status: stat,
+    user_name: appData.user_name
   });
 }
 
@@ -67,10 +73,21 @@ function setDisconnectListener(id) {
 }
 
 function getConnected() {
-  database.ref('users').once('value')
-  .then(function(data) {
+  database.ref('users').on('value', function(data) {
   // Handle new connected user
+  console.log(data.val());
+  let counter = 0;
+  for(let i in data.val()) {
+    if(data.val()[i].status == "connected") {
+      counter++;
+    }
+  }
+  console.log(counter);
+  let node = document.createElement('h3');
+  node.innerHTML = `<h3>${counter}</h3>`;
+  document.querySelector('.jumbotron').insertAdjacentElement('afterend', node);
   });
+
 }
 
 function connectedUsersUpdate() {
