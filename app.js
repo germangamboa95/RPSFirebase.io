@@ -50,9 +50,87 @@ const DatabaseCtrl = (function(){
       database.ref('turn').on('value', cb);
   }
 
-  function selectionsMade() {
+  function selectionsMade(appdata) {
     database.ref('players').on('value', function(data) {
-      console.log(data.val());
+      var compare = function(choice1,choice2) {
+          if (choice1 === choice2) {
+              return "tie";
+          }
+          if (choice1 === "rock") {
+              if (choice2 === "scissors") {
+                  // rock wins
+                  return "win";
+              } else {
+                  // paper wins
+                  return "lose";
+              }
+          }
+          if (choice1 === "paper") {
+              if (choice2 === "rock") {
+                  // paper wins
+                  return "win";
+              } else {
+                  // scissors wins
+                  return "lose";
+              }
+          }
+          if (choice1 === "scissors") {
+              if (choice2 === "rock") {
+                  // rock wins
+                  return "lose";
+              } else {
+                  // scissors wins
+                  return "win";
+              }
+          }
+      };
+
+      let playerOne = data.val()[appdata.player.name];
+       playerOne = playerOne.selection;
+      let opponent = data.val()[appdata.opponent.name];
+          opponent =  opponent.selection;
+
+          if(playerOne != 'none' && opponent != 'none'){
+            database.ref('players').off();
+            let result = compare(playerOne, opponent);
+;
+
+            if(result == 'win') {
+              let playerOne = data.val()[appdata.player.name];
+              let opponent = data.val()[appdata.opponent.name]
+              appdata.player.wins++;
+              appdata.opponent.losses++;
+
+
+              database.ref('players/'+playerOne.name).set(appdata.player);
+              database.ref('players/'+opponent.name).set(appdata.opponent);
+
+            } else if( result == 'lose') {
+              let playerOne = data.val()[appdata.player.name];
+              let opponent = data.val()[appdata.opponent.name]
+              appdata.player.losses++;
+              appdata.opponent.wins++;
+              database.ref('players/'+playerOne.name).set(appdata.player);
+              database.ref('players/'+opponent.name).set(appdata.opponent);
+
+            } else {
+              let playerOne = data.val()[appdata.player.name];
+              let opponent = data.val()[appdata.opponent.name]
+              appdata.player.ties++
+              appdata.opponent.ties++
+              database.ref('players/'+playerOne.name).set(appdata.player);
+              database.ref('players/'+opponent.name).set(appdata.opponent);
+
+            }
+
+            database.ref('turn').once('value', function(data) {
+              let num = data.val();
+              num++;
+              setTurn(num);
+            })
+
+          }
+
 
     });
 
@@ -67,7 +145,7 @@ const DatabaseCtrl = (function(){
     loadOpponentData: loadOpponent,
     whoseTurn: whoseTurn,
     setTurn: setTurn,
-    selectionsMade, selectionsMade
+    selectionsMade: selectionsMade
   }
 
 })()
@@ -84,8 +162,8 @@ const UiCtrl = (function(AppCtrl, DatabaseCtrl){
     <form id="selection">
     <label for="rock">Rock </label>
     <input id="rock" type="checkbox" name="rock" value="rock">
-    <label for="stone">Stone </label>
-    <input id="stone" type="checkbox" name="stone" value="stone">
+    <label for="stone">scissors</label>
+    <input id="stone" type="checkbox" name="scissors" value="scissors">
     <label for="paper">Paper</label>
     <input id="paper" type="checkbox" name="paper" value="paper">
     <button type="submit">Submit</button>
@@ -156,7 +234,7 @@ const AppCtrl = (function(){
       ties: "",
       connected: "",
       playerNumber: "",
-      selection: ""
+      selection: "none"
     },
     turn: 0
   };
@@ -188,7 +266,7 @@ const AppCtrl = (function(){
         console.log(data.val(), " hey");
         sessionData.opponent = data.val();
         UiCtrl.opponentCard(sessionData.opponent);
-        DatabaseCtrl.whoseTurn(turnCheck);
+        turnCheck();
       }
 
     };
@@ -217,6 +295,17 @@ const AppCtrl = (function(){
   }
 
 
+  let reset = () => {
+
+      //DatabaseCtrl.setPlayer(sessionData.player);
+      sessionData.player.selection = 'none';
+      sessionData.opponent.selection = 'none';
+      UiCtrl.addPlayerCard(sessionData.player);
+      loadOpponent();
+      setDisconnectListener(sessionData.player.name);
+      selectionListener();
+  }
+
 
 
 
@@ -236,7 +325,7 @@ const AppCtrl = (function(){
       DatabaseCtrl.setPlayer(sessionData.player);
       UiCtrl.addPlayerCard(sessionData.player);
       setDisconnectListener(sessionData.player.name);
-      loadOpponent();
+
       selectionListener();
 
     });
@@ -248,14 +337,19 @@ const AppCtrl = (function(){
   function selectionListener() {
     document.querySelector('#selection').addEventListener('submit', function(e) {
       e.preventDefault();
+      console.log(e);
       for(let i = 0; i < 3; i++) {
         if(e.target[i].checked == true) {
           sessionData.player.selection = e.target[i].value;
           break;
         }
       }
+      document.querySelector('#selection').style.display = "none";
       DatabaseCtrl.setPlayer(sessionData.player);
-      DatabaseCtrl.selectionsMade();
+      loadOpponent();
+      DatabaseCtrl.selectionsMade(sessionData);
+      DatabaseCtrl.whoseTurn(reset);
+
 
     });
 
